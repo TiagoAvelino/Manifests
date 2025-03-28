@@ -4,5 +4,5 @@ resources:
 - ../../base/
 
 replicas:
-- name: nginx-deployment
+- name: quarkus-example
   count: 1
