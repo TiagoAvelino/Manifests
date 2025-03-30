@@ -9,16 +9,19 @@ spec:
   podTemplate:
     securityContext:
       fsGroup: 0
+      runAsUser: 0
   serviceAccountName: pipeline
   params:
     - name: APP_NAME
       value: "QuarkusApp"
     - name: GIT_REPO
       value: "https://github.com/TiagoAvelino/Quarkus-Example"
+    - name: GIT_REPO_PLATAFORM
+      value: "https://github.com/TiagoAvelino/Manifests"
     - name: GIT_REVISION
       value: "dev"
     - name: IMAGE_NAME
-      value: "quay.io/rh_ee_tavelino/ci-quarkus:v1"
+      value: "quay.io/rh_ee_tavelino/ci-quarkus"
     - name: CONTEXT
       value: "."
   workspaces:
