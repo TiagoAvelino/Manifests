@@ -3,23 +3,7 @@ kind: Deployment
 metadata:
   name: quarkus-example
   namespace: quarkus-app
-  annotations:
-    alpha.image.policy.openshift.io/resolve-names: '*'
-    app.openshift.io/route-disabled: 'false'
-    app.openshift.io/vcs-ref: ''
-    app.openshift.io/vcs-uri: 'https://github.com/TiagoAvelino/Quarkus-Example'
-    image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"quarkus-example:latest","namespace":"quarkus-app"},"fieldPath":"spec.template.spec.containers[?(@.name==\"quarkus-example\")].image","paused":"false"}]'
-    openshift.io/generated-by: OpenShiftWebConsole
-  labels:
-    app: quarkus-example
-    app.kubernetes.io/component: quarkus-example
-    app.kubernetes.io/instance: quarkus-example
-    app.kubernetes.io/name: quarkus-example
-    app.kubernetes.io/part-of: quarkus-app-app
-    app.openshift.io/runtime: java
-    app.openshift.io/runtime-version: openjdk-17-ubi8
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: quarkus-example
