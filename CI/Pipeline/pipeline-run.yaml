@@ -6,9 +6,10 @@ metadata:
 spec:
   pipelineRef:
     name: java-pipeline
-  taskRunSpecs:
-    - pipelineTaskName: fetch-repository
-      taskServiceAccountName: pipeline
+  podTemplate:
+    securityContext:
+      fsGroup: 0
+  serviceAccountName: pipeline
   params:
     - name: APP_NAME
       value: "QuarkusApp"
@@ -17,9 +18,9 @@ spec:
     - name: GIT_REVISION
       value: "dev"
     - name: IMAGE_NAME
-      value: "quay.io/rh_ee_tavelino/ci-quarkus"
+      value: "quay.io/rh_ee_tavelino/ci-quarkus:v1"
     - name: CONTEXT
-      value: "src/"
+      value: "."
   workspaces:
     - name: workspace
       persistentVolumeClaim:

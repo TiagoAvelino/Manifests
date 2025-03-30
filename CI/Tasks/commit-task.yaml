@@ -1,0 +1,98 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: update-kustomize-repo
+  annotations:
+    tekton.dev/displayName: "Update Kustomize Git Repository"
+spec:
+  stepTemplate:
+    securityContext:
+      runAsUser: 0
+  params:
+    - name: gitRepositoryUrl
+      description: URL of the Git repository to update
+      type: string
+    - name: gitRepositoryRevision
+      description: Branch or Tag to push the update to
+      type: string
+      default: argocd
+    - name: gitPath
+      description: Path in the repository to work in.
+      type: string
+      default: k8s/deployment.yaml
+    - name: imageTag
+      description: The image tag to be written into the YAML
+    - name: imageName
+      description: The image tag to be written into the YAML
+      type: string
+    - name: verbose
+      description: Log the commands used during execution
+      type: string
+      default: "true"
+  workspaces:
+    - name: repository
+  steps:
+    - name: git-checkout
+      image: alpine/git:v2.26.2
+      workingDir: $(workspaces.repository.path)/manifests
+      env:
+        - name: GIT_USER_NAME
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: username
+      script: |
+        #!/usr/bin/env sh
+        # Ensure the manifests directory exists
+        mkdir -p $(workspaces.repository.path)/manifests
+        cd $(workspaces.repository.path)/manifests
+        if [ "$(params.verbose)" = "true" ] ; then
+          set -x
+          echo "**** Cloning $(params.gitRepositoryUrl) into $(pwd)"
+        fi
+        # Clone the repository into the manifests directory
+        git clone "$(params.gitRepositoryUrl)" .
+        git checkout "$(params.gitRepositoryRevision)"
+        git config --global user.name "$GIT_USER_NAME"
+        git pull origin "$(params.gitRepositoryRevision)"
+    - name: update-yaml
+      image: quay.io/dsanchor/ubi8-git:0.0.2
+      workingDir: $(workspaces.repository.path)/manifests
+      script: |
+        #!/usr/bin/env sh
+        set -e
+        echo "**** Working directory: $(pwd)"
+        if [ "$(params.verbose)" = "true" ] ; then
+          echo "**** Updating $(params.gitPath) image tag to $(params.imageTag)"
+        fi
+        # Update the image tag in the specified file; adjust the regex if needed
+        sed -i 's|image:.*|$(params.imageName)@\$(params.imageTag)|' $(params.gitPath)
+        cat $(params.gitPath)
+    - name: commit-push-changes
+      image: alpine/git:v2.26.2
+      workingDir: $(workspaces.repository.path)/manifests
+      env:
+        - name: GIT_USER_NAME
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: username
+        - name: GIT_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: email
+        - name: GIT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: password
+      script: |
+        #!/usr/bin/env sh
+        git config --global user.name "$GIT_USER_NAME"
+        git config --global user.email "$GIT_EMAIL"
+        git config --global credential.helper store
+        echo "https://$GIT_USER_NAME:$GIT_PASSWORD@github.com" > ~/.git-credentials
+        git add .
+        git commit --allow-empty -m "[OpenShift Pipeline] Updating $(params.gitPath) image tag to $(params.imageTag)"
+        git push origin "$(params.gitRepositoryRevision)" -v

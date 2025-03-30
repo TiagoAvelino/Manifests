@@ -8,11 +8,11 @@ spec:
     - description: Nome da aplicação
       name: APP_NAME
       type: string
-    - description: URL do repositório Git
+    - description: URL do repositório Git da aplicação
       name: GIT_REPO
       type: string
     - default: main
-      description: Branch ou tag para checkout
+      description: Branch ou tag para checkout da aplicação
       name: GIT_REVISION
       type: string
     - description: Nome da imagem para construir e empurrar
@@ -21,6 +21,10 @@ spec:
     - default: .
       name: CONTEXT
       type: string
+    - description: URL do repositório Git dos manifests
+      name: GIT_REPO_PLATAFORM
+      type: string
+      default: "https://github.com/TiagoAvelino/Manifests"
   tasks:
     - name: fetch-repository
       params:
@@ -58,7 +62,7 @@ spec:
         resolver: cluster
       params:
         - name: GOALS
-          value: 
+          value:
             - clean
             - package
         - name: CONTEXT_DIR
@@ -67,8 +71,8 @@ spec:
         - name: source
           workspace: workspace
         - name: maven_settings
-          workspace: maven_settings 
-    - name: build-and-push-image
+          workspace: maven_settings
+    - name: buildah
       runAfter:
         - build-jar
       params:
@@ -81,7 +85,7 @@ spec:
           - name: kind
             value: task
           - name: name
-            value: buildah
+            value: buildah-com
           - name: namespace
             value: openshift-pipelines
         resolver: cluster
@@ -90,6 +94,32 @@ spec:
           workspace: workspace
         - name: dockerconfig
           workspace: dockerconfig
+    - name: update-kustomize
+      runAfter:
+        - buildah
+      taskRef:
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: update-kustomize-repo
+          - name: namespace
+            value: openshift-pipelines
+        resolver: cluster
+      params:
+        - name: gitRepositoryUrl
+          value: $(params.GIT_REPO_PLATAFORM)
+        - name: gitRepositoryRevision
+          value: "main"
+        - name: gitPath
+          value: overlays/dev/deployment.yaml
+        - name: imageTag
+          value: $(tasks.buildah.results.IMAGE_DIGEST)
+        - name: imageName
+          value: $(tasks.buildah.results.IMAGE_URL)
+      workspaces:
+        - name: repository
+          workspace:  workspace
   workspaces:
     - description: Workspace para persistir dados entre as tarefas
       name: workspace
