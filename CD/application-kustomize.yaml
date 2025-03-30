@@ -1,0 +1,13 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kustomize
+spec:
+  project: openshift-gitops-operator
+  source:
+    path: overlays/dev/
+    repoURL: 'https://github.com/TiagoAvelino/Manifests'
+    targetRevision: main
+  destination:
+    namespace: quarkus-app
+    server: 'https://kubernetes.default.svc'

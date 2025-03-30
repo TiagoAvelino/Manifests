@@ -5,6 +5,8 @@ metadata:
   namespace: quarkus-app
   labels:
     app: quarkus-example
+  annotations:
+    argocd.argoproj.io/sync-wave: "20"
 spec:
   selector:
     matchLabels:

@@ -2,3 +2,5 @@ apiVersion: project.openshift.io/v1
 kind: Project
 metadata:
   name: quarkus-app
+  annotations:
+      argocd.argoproj.io/hook: PreSync
