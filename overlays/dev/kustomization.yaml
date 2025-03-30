@@ -6,3 +6,6 @@ resources:
 replicas:
 - name: quarkus-example
   count: 1
+
+patchesStrategicMerge:
+  - deployment.yaml
