@@ -1,0 +1,32 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: java-pipeline-run
+  namespace: openshift-pipelines
+spec:
+  pipelineRef:
+    name: java-pipeline
+  taskRunSpecs:
+    - pipelineTaskName: fetch-repository
+      taskServiceAccountName: pipeline
+  params:
+    - name: APP_NAME
+      value: "QuarkusApp"
+    - name: GIT_REPO
+      value: "https://github.com/TiagoAvelino/Quarkus-Example"
+    - name: GIT_REVISION
+      value: "dev"
+    - name: IMAGE_NAME
+      value: "quay.io/rh_ee_tavelino/ci-quarkus"
+    - name: CONTEXT
+      value: "src/"
+  workspaces:
+    - name: workspace
+      persistentVolumeClaim:
+        claimName: workspace-pvc
+    - name: dockerconfig
+      secret:
+        secretName: my-quay-secret
+    - name: maven_settings
+      persistentVolumeClaim:
+        claimName: maven-settings-pvc
