@@ -17,7 +17,7 @@ metadata:
     openshift.io/generated-by: OpenShiftWebConsole
     openshift.io/host.generated: 'true'
 spec:
-  host: quarkus-example-quarkus-app.apps.cluster-qj7w2.qj7w2.sandbox429.opentlc.com
+  host: quarkus-example-quarkus-app.apps.tiago-cluster.sandbox1900.opentlc.com
   to:
     kind: Service
     name: quarkus-example
