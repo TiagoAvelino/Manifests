@@ -20,10 +20,14 @@ spec:
       value: "https://github.com/TiagoAvelino/Manifests"
     - name: GIT_REVISION
       value: "dev"
+    - name: GIT_REVISION_DESTINATION
+      value: "hml"
     - name: IMAGE_NAME
       value: "quay.io/rh_ee_tavelino/ci-quarkus"
     - name: CONTEXT
       value: "."
+    - name: REPO_FULL_NAME
+      value: TiagoAvelino/Quarkus-Example
   workspaces:
     - name: workspace
       persistentVolumeClaim:

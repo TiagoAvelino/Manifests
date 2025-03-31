@@ -8,23 +8,31 @@ spec:
     - description: Nome da aplicação
       name: APP_NAME
       type: string
-    - description: URL do repositório Git da aplicação
+    - description: URL do repositório Git da aplicação (usado para clone)
       name: GIT_REPO
       type: string
-    - default: main
-      description: Branch ou tag para checkout da aplicação
+    - description: Branch ou tag para checkout da aplicação
       name: GIT_REVISION
       type: string
+      default: dev
+    - description: Branch ou tag para checkout da aplicação
+      name: GIT_REVISION_DESTINATION
+      type: string
+      default: hml
     - description: Nome da imagem para construir e empurrar
       name: IMAGE_NAME
       type: string
-    - default: .
+    - description: Contexto de build (subdiretório)
       name: CONTEXT
       type: string
+      default: .
     - description: URL do repositório Git dos manifests
       name: GIT_REPO_PLATAFORM
       type: string
       default: "https://github.com/TiagoAvelino/Manifests"
+    - description: Nome do repo para pull request
+      name: REPO_FULL_NAME
+      type: string
   tasks:
     - name: fetch-repository
       params:
@@ -37,6 +45,7 @@ spec:
         - name: deleteExisting
           value: 'true'
       taskRef:
+        resolver: cluster
         params:
           - name: kind
             value: task
@@ -44,7 +53,6 @@ spec:
             value: git-clone
           - name: namespace
             value: openshift-pipelines
-        resolver: cluster
       workspaces:
         - name: output
           workspace: workspace
@@ -52,6 +60,7 @@ spec:
       runAfter:
         - fetch-repository
       taskRef:
+        resolver: cluster
         params:
           - name: kind
             value: task
@@ -59,7 +68,6 @@ spec:
             value: maven
           - name: namespace
             value: openshift-pipelines
-        resolver: cluster
       params:
         - name: GOALS
           value:
@@ -75,12 +83,8 @@ spec:
     - name: buildah
       runAfter:
         - build-jar
-      params:
-        - name: IMAGE
-          value: $(params.IMAGE_NAME)
-        - name: CONTEXT
-          value: $(params.CONTEXT)
       taskRef:
+        resolver: cluster
         params:
           - name: kind
             value: task
@@ -88,7 +92,11 @@ spec:
             value: buildah-com
           - name: namespace
             value: openshift-pipelines
-        resolver: cluster
+      params:
+        - name: IMAGE
+          value: $(params.IMAGE_NAME)
+        - name: CONTEXT
+          value: $(params.CONTEXT)
       workspaces:
         - name: source
           workspace: workspace
@@ -98,6 +106,7 @@ spec:
       runAfter:
         - buildah
       taskRef:
+        resolver: cluster
         params:
           - name: kind
             value: task
@@ -105,7 +114,6 @@ spec:
             value: update-kustomize-repo
           - name: namespace
             value: openshift-pipelines
-        resolver: cluster
       params:
         - name: gitRepositoryUrl
           value: $(params.GIT_REPO_PLATAFORM)
@@ -119,7 +127,34 @@ spec:
           value: $(tasks.buildah.results.IMAGE_URL)
       workspaces:
         - name: repository
-          workspace:  workspace
+          workspace: workspace
+    - name: create-pr
+      runAfter:
+        - update-kustomize
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: github-open-pr
+          - name: namespace
+            value: openshift-pipelines
+      params:
+        - name: REPO_FULL_NAME
+          value: $(params.REPO_FULL_NAME)
+        - name: HEAD
+          value: $(params.GIT_REVISION)
+        - name: BASE
+          value: $(params.GIT_REVISION_DESTINATION)
+        - name: TITLE
+          value: "Merge changes from dev to hml"
+        - name: BODY
+          value: "Automated pull request created by OpenShift Pipeline"
+        - name: GITHUB_TOKEN_SECRET_NAME
+          value: git-credentials
+        - name: GITHUB_TOKEN_SECRET_KEY
+          value: password
   workspaces:
     - description: Workspace para persistir dados entre as tarefas
       name: workspace

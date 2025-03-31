@@ -1,0 +1,54 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: pipeline-template
+spec:
+  params:
+  - name: gitrevision
+    description: The git revision
+    default: main
+  - name: gitrepositoryurl
+    description: The git repository url
+  - name: contenttype
+    description: The Content-Type of the event
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1beta1
+    kind: PipelineRun
+    metadata:
+      name: java-pipeline-run
+      namespace: openshift-pipelines
+    spec:
+      pipelineRef:
+        name: java-pipeline
+      podTemplate:
+        securityContext:
+          fsGroup: 0
+          runAsUser: 0
+      serviceAccountName: pipeline
+      params:
+        - name: APP_NAME
+          value: "QuarkusApp"
+        - name: GIT_REPO
+          value: "https://github.com/TiagoAvelino/Quarkus-Example"
+        - name: GIT_REPO_PLATAFORM
+          value: "https://github.com/TiagoAvelino/Manifests"
+        - name: GIT_REVISION
+          value: "dev"
+        - name: GIT_REVISION_DESTINATION
+          value: "hml"
+        - name: IMAGE_NAME
+          value: "quay.io/rh_ee_tavelino/ci-quarkus"
+        - name: CONTEXT
+          value: "."
+        - name: REPO_FULL_NAME
+          value: TiagoAvelino/Quarkus-Example
+      workspaces:
+        - name: workspace
+          persistentVolumeClaim:
+            claimName: workspace-pvc
+        - name: dockerconfig
+          secret:
+            secretName: my-quay-secret
+        - name: maven_settings
+          persistentVolumeClaim:
+            claimName: maven-settings-pvc

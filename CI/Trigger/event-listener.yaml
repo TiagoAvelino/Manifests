@@ -1,0 +1,20 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: ci-quarkus-github-listener
+spec:
+  serviceAccountName: pipeline
+  triggers:
+    - name: GitHub-listener
+      bindings:
+        - ref: ci-quarkus-pipeline-binding
+      template:
+        ref: pipeline-template
+      interceptors:
+      - ref:
+          name: "github"
+        params:
+          - name: "secretRef"
+            value:
+              secretName: github-interceptor-secret
+              secretKey: secretToken  
