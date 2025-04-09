@@ -8,8 +8,8 @@ spec:
     name: java-pipeline
   podTemplate:
     securityContext:
-      fsGroup: 0
-      runAsUser: 0
+      fsGroup: 653
+      # runAsUser: 0
   serviceAccountName: pipeline
   params:
     - name: APP_NAME
@@ -23,9 +23,7 @@ spec:
     - name: GIT_REVISION_DESTINATION
       value: "hml"
     - name: IMAGE_NAME
-      value: "quay.io/rh_ee_tavelino/ci-quarkus"
-    - name: CONTEXT
-      value: "."
+      value: "quay.io/rh_ee_tavelino/"
     - name: REPO_FULL_NAME
       value: TiagoAvelino/Quarkus-Example
   workspaces:

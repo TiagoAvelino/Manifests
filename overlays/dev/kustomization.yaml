@@ -1,11 +1,14 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- ../../base/
+  - ../../base/
 
 replicas:
-- name: quarkus-example
-  count: 1
+  - name: quarkus-example
+    count: 1
 
-patchesStrategicMerge:
-  - deployment.yaml
+patches:
+  - path: deployment.yaml
+    target:
+      kind: Deployment
+      name: quarkus-example

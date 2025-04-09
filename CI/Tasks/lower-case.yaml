@@ -1,0 +1,20 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: lowercase-app-name
+  namespace: openshift-pipelines
+spec:
+  params:
+    - name: APP_NAME
+      description: The application name to convert to lowercase.
+      type: string
+  results:
+    - name: lowerAppName
+      description: The lower-case version of APP_NAME.
+  steps:
+    - name: convert
+      image: busybox
+      script: |
+        #!/bin/sh
+        LOWER_APP_NAME=$(echo "$(params.APP_NAME)" | tr '[:upper:]' '[:lower:]')
+        echo -n "${LOWER_APP_NAME}" > $(results.lowerAppName.path)

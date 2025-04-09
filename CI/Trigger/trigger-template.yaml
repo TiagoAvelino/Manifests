@@ -4,18 +4,19 @@ metadata:
   name: pipeline-template
 spec:
   params:
-  - name: gitrevision
-    description: The git revision
-    default: main
-  - name: gitrepositoryurl
-    description: The git repository url
-  - name: contenttype
-    description: The Content-Type of the event
+    - description: Nome da aplicação
+      name: APP_NAME
+    - description: URL do repositório Git da aplicação (usado para clone)
+      name: GIT_REPO
+    - description: Branch ou tag para checkout da aplicação
+      name: GIT_REVISION
+    - description: Nome do repo para pull request
+      name: REPO_FULL_NAME
   resourcetemplates:
   - apiVersion: tekton.dev/v1beta1
     kind: PipelineRun
     metadata:
-      name: java-pipeline-run
+      generateName: java-pipeline-run-
       namespace: openshift-pipelines
     spec:
       pipelineRef:
@@ -27,21 +28,19 @@ spec:
       serviceAccountName: pipeline
       params:
         - name: APP_NAME
-          value: "QuarkusApp"
+          value: $(tt.params.APP_NAME)
         - name: GIT_REPO
-          value: "https://github.com/TiagoAvelino/Quarkus-Example"
+          value: $(tt.params.GIT_REPO)
         - name: GIT_REPO_PLATAFORM
           value: "https://github.com/TiagoAvelino/Manifests"
         - name: GIT_REVISION
-          value: "dev"
+          value: $(tt.params.GIT_REVISION)
         - name: GIT_REVISION_DESTINATION
           value: "hml"
         - name: IMAGE_NAME
-          value: "quay.io/rh_ee_tavelino/ci-quarkus"
-        - name: CONTEXT
-          value: "."
+          value: "quay.io/rh_ee_tavelino/"
         - name: REPO_FULL_NAME
-          value: TiagoAvelino/Quarkus-Example
+          value: $(tt.params.REPO_FULL_NAME)
       workspaces:
         - name: workspace
           persistentVolumeClaim:

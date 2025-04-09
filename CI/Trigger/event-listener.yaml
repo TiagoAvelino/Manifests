@@ -18,3 +18,5 @@ spec:
             value:
               secretName: github-interceptor-secret
               secretKey: secretToken  
+          - name: "eventTypes"
+            value: ["push"]

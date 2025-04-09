@@ -4,17 +4,21 @@ metadata:
   name: cluster-interceptors-role
 rules:
 - apiGroups: ["triggers.tekton.dev"]
-  resources: ["eventlisteners",
-              "clustertriggerbindings", 
-              "clusterinterceptors", 
-              "triggerbindings", 
-              "triggertemplates", 
-              "triggers", 
-              "interceptors"]
+  resources:
+    - eventlisteners
+    - clustertriggerbindings
+    - clusterinterceptors
+    - triggerbindings
+    - triggertemplates
+    - triggers
+    - interceptors
   verbs: ["get", "list", "watch"]
+- apiGroups: ["tekton.dev"]
+  resources: ["pipelineruns"]
+  verbs: ["create", "get", "list", "watch"]
 - apiGroups: [""]
-  resources: ["configmaps", "secrets"]
-  verbs: ["get", "list", "watch"]
+  resources: ["configmaps", "secrets", "events"]
+  verbs: ["get", "list", "watch", "create", "patch"]
 - apiGroups: [""]
   resources: ["serviceaccounts"]
   verbs: ["impersonate"]

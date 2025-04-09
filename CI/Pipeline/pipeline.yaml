@@ -22,10 +22,6 @@ spec:
     - description: Nome da imagem para construir e empurrar
       name: IMAGE_NAME
       type: string
-    - description: Contexto de build (subdiretório)
-      name: CONTEXT
-      type: string
-      default: .
     - description: URL do repositório Git dos manifests
       name: GIT_REPO_PLATAFORM
       type: string
@@ -73,16 +69,22 @@ spec:
           value:
             - clean
             - package
-        - name: CONTEXT_DIR
-          value: .
       workspaces:
         - name: source
           workspace: workspace
         - name: maven_settings
           workspace: maven_settings
-    - name: buildah
+    - name: convert-app-name
       runAfter:
         - build-jar
+      taskRef:
+        name: lowercase-app-name
+      params:
+        - name: APP_NAME
+          value: $(params.APP_NAME)
+    - name: buildah
+      runAfter:
+        - convert-app-name
       taskRef:
         resolver: cluster
         params:
@@ -94,9 +96,8 @@ spec:
             value: openshift-pipelines
       params:
         - name: IMAGE
-          value: $(params.IMAGE_NAME)
-        - name: CONTEXT
-          value: $(params.CONTEXT)
+          # Use the lower-case APP_NAME from the conversion task.
+          value:  $(params.IMAGE_NAME)$(tasks.convert-app-name.results.lowerAppName):latest
       workspaces:
         - name: source
           workspace: workspace
