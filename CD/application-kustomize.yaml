@@ -1,16 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: quarkus-example
-  namespace: openshift-gitops
+  name: ci-quarkus
 spec:
   destination:
-    namespace: quarkus-app
-    server: 'https://kubernetes.default.svc'
-  project: default
+    namespace: ''
+    server: https://kubernetes.default.svc
   source:
-    path: overlays/dev/
-    repoURL: 'https://github.com/TiagoAvelino/Manifests'
+    path: overlays/dev
+    repoURL: https://github.com/TiagoAvelino/Manifests
     targetRevision: main
+  sources: []
+  project: default
   syncPolicy:
-    automated: {}
+    automated:
+      prune: false
+      selfHeal: false
