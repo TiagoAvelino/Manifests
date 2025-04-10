@@ -15,4 +15,4 @@ spec:
     spec:
       containers:
       - name: quarkus-example
-        image: teste2@	est
+        image: quay.io/rh_ee_tavelino/quarkusapp:latest@sha256:3a7e3044479d4abde27385a0d71fa014ab3d4178d52a209b80259abaa25d5249
