@@ -91,7 +91,7 @@ spec:
           - name: kind
             value: task
           - name: name
-            value: buildah-com
+            value: buildah-1-18-0
           - name: namespace
             value: openshift-pipelines
       params:
