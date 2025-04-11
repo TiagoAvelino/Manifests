@@ -8,7 +8,7 @@ spec:
     name: java-pipeline
   podTemplate:
     securityContext:
-      fsGroup: 65532
+      fsGroup: 1001
       # runAsUser: 0
   serviceAccountName: pipeline
   params:
@@ -36,3 +36,5 @@ spec:
     - name: maven_settings
       persistentVolumeClaim:
         claimName: maven-settings-pvc
+    - name: empty
+      emptyDir: {}

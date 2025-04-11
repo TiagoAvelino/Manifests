@@ -128,7 +128,7 @@ spec:
           value: $(tasks.buildah.results.IMAGE_URL)
       workspaces:
         - name: repository
-          workspace: workspace
+          workspace: empty
     - name: create-pr
       runAfter:
         - update-kustomize
@@ -163,3 +163,5 @@ spec:
       name: dockerconfig
     - description: Workspace para configurações Maven, pode estar vazio
       name: maven_settings
+    - description: Workspace para git merge pode estar vazio
+      name: empty
