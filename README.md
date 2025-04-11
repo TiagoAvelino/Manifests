@@ -101,6 +101,12 @@ oc apply -f CI/Secrets/quay-secret.yaml && \
 oc apply -f CI/Secrets/secret-application.yaml
 ```
 
+After appling the secrets, you will need to apply the secrets into the service account, to do it its necessary to apply the SA manifest:
+
+```bash
+oc apply -f CI/SA/roles.yaml
+```
+
 Also, make sure you have the custom tasks needed by the pipeline applied to your cluster:
 
 ```bash
