@@ -14,9 +14,9 @@ spec:
   steps:
     - name: convert
       image: registry.access.redhat.com/ubi8/ubi-minimal
+      securityContext:
+        runAsUser: 1001
       script: |
         #!/bin/sh
         LOWER_APP_NAME=$(echo "$(params.APP_NAME)" | tr '[:upper:]' '[:lower:]')
         echo -n "${LOWER_APP_NAME}" > $(results.lowerAppName.path)
-      securityContext:
-        runAsUser: 1001

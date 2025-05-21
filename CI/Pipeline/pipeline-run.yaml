@@ -8,8 +8,7 @@ spec:
     name: java-pipeline
   podTemplate:
     securityContext:
-      fsGroup: 1001
-      # runAsUser: 0
+      runAsUser: 0
   serviceAccountName: pipeline
   params:
     - name: APP_NAME

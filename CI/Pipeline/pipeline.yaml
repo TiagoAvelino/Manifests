@@ -69,6 +69,8 @@ spec:
           value:
             - clean
             - package
+        - name: MAVEN-MIRROR-URL
+          value: my-url-nexus
       workspaces:
         - name: source
           workspace: workspace
@@ -96,8 +98,11 @@ spec:
             value: openshift-pipelines
       params:
         - name: IMAGE
-          # Use the lower-case APP_NAME from the conversion task.
           value:  $(params.IMAGE_NAME)$(tasks.convert-app-name.results.lowerAppName):latest
+        - name: DOCKERFILE
+          value: ./Dockerfile
+        - name: CONTEXT
+          value: .
       workspaces:
         - name: source
           workspace: workspace
