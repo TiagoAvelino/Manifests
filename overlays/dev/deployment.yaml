@@ -15,4 +15,4 @@ spec:
     spec:
       containers:
       - name: quarkus-example
-        image: quay.io/rh_ee_tavelino/quarkusapp:latest@sha256:6e8da323b2d51c6893b4b4ede1595a95b18d2a053234d118480f041cdb82ed0a
+        image: image-registry.openshift-image-registry.svc.cluster.local:5000/prodepa-pipelines/quarkusapp:latest@sha256:920669d6e4615d7f5dc8382f0757ba076738d161242cab3c19c4d72232cdf6b3
