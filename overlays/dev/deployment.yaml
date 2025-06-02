@@ -15,4 +15,4 @@ spec:
     spec:
       containers:
       - name: quarkus-example
-        image: image-registry.openshift-image-registry.svc.cluster.local:5000/prodepa-pipelines/quarkusapp:latest@sha256:fbaafd932befe8bcd40a45f1a894b944334e3b9156619c70524a91eabe941c32
+        image: image-registry.openshift-image-registry.svc.cluster.local:5000/prodepa-pipelines/quarkusapp:latest@sha256:87c19f9ba10eb24aa18008b81c6a29dc6cbbca8282982de5f53893a15f685abc
