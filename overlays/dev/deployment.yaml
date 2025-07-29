@@ -14,4 +14,4 @@ spec:
     spec:
       containers:
       - name: quarkus-example
-        image: image-registry.openshift-image-registry.svc.cluster.local:5000/cicd-pipelines/springapp:latest@sha256:afaf181c08c8fe8df23c9f7b965857c1fbd770ad8ed8ad44b3588740a924344d
+        image: image-registry.openshift-image-registry.svc.cluster.local:5000/cicd-pipelines/springapp@sha256:633ee888dc49401717c732da505747b00cf0e312dac34c2cf454a042a17c0e40
