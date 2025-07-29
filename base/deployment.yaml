@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: quarkus-example
-  namespace: quarkus-app
   labels:
     app: quarkus-example
   annotations:
