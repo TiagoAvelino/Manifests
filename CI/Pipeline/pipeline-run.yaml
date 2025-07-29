@@ -1,8 +1,8 @@
 apiVersion: tekton.dev/v1beta1
 kind: PipelineRun
 metadata:
-  name: java-pipeline-run
-  namespace: openshift-pipelines
+  name: java-pipeline-run-teste
+  namespace: prodepa-pipelines
 spec:
   pipelineRef:
     name: java-pipeline
@@ -22,18 +22,15 @@ spec:
     - name: GIT_REVISION_DESTINATION
       value: "hml"
     - name: IMAGE_NAME
-      value: "quay.io/rh_ee_tavelino/"
+      value: "image-registry.openshift-image-registry.svc.cluster.local:5000/prodepa-pipelines/"
     - name: REPO_FULL_NAME
       value: TiagoAvelino/Quarkus-Example
   workspaces:
     - name: workspace
       persistentVolumeClaim:
         claimName: workspace-pvc
-    - name: dockerconfig
-      secret:
-        secretName: my-quay-secret
     - name: maven_settings
-      persistentVolumeClaim:
-        claimName: maven-settings-pvc
+      configMap:
+        name: my-maven-settings
     - name: empty
       emptyDir: {}

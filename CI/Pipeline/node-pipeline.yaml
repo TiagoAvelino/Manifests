@@ -1,0 +1,117 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: simple-node-app-pipeline
+spec:
+  params:
+    - name: GIT_REPO
+      description: URL to the application Git repository
+      type: string
+    - name: GIT_REVISION
+      description: Application branch or tag
+      type: string
+      default: "main"
+    - name: IMAGE_URL
+      description: Image registry URL for the build
+      type: string
+    - name: MANIFESTS_REPO
+      description: Git repository URL for platform manifests
+      type: string
+      default: "https://github.com/TiagoAvelino/Manifests"
+    - name: MANIFESTS_REVISION
+      description: Branch or tag for manifests repo
+      type: string
+      default: "main"
+  workspaces:
+    - name: app-source
+    - name: manifests-source
+  tasks:
+    - name: fetch-app-repo
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: git-clone
+          - name: namespace
+            value: openshift-pipelines
+      params:
+        - name: URL
+          value: "$(params.GIT_REPO)"
+        - name: REVISION
+          value: "$(params.GIT_REVISION)"
+        - name: deleteExisting
+          value: "true"
+      workspaces:
+        - name: output
+          workspace: app-source
+
+    # - name: install-and-test
+    #   runAfter:
+    #     - fetch-app-repo
+    #   taskSpec:
+    #     workspaces:
+    #       - name: source
+    #     steps:
+    #       - name: install
+    #         image: image-registry.openshift-image-registry.svc:5000/openshift/nodejs:16
+    #         workingDir: /workspace/source
+    #         script: |
+    #           npm ci
+    #       - name: test
+    #         image: image-registry.openshift-image-registry.svc:5000/openshift/nodejs:16
+    #         workingDir: /workspace/source
+    #         script: |
+    #           npm test
+    #   workspaces:
+    #     - name: source
+    #       workspace: app-source
+
+    - name: build-image
+      runAfter: 
+        - fetch-app-repo
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: s2i-nodejs
+          - name: namespace
+            value: openshift-pipelines
+      params:
+        - name: IMAGE
+          value: "$(params.IMAGE_URL)"
+        - name: CONTEXT
+          value: "./"
+      workspaces:
+        - name: source
+          workspace: app-source
+
+    - name: update-kustomize
+      runAfter:
+        - build-image
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: update-kustomize-repo
+          - name: namespace
+            value: cicd-pipelines
+      params:
+        - name: gitRepositoryUrl
+          value: "$(params.MANIFESTS_REPO)"
+        - name: gitRepositoryRevision
+          value: "$(params.MANIFESTS_REVISION)"
+        - name: gitPath
+          value: "overlays/dev/deployment.yaml"
+        - name: imageName
+          value: "$(params.IMAGE_URL)"
+        - name: imageTag
+          value: "latest"
+      workspaces:
+        - name: repository
+          workspace: manifests-source

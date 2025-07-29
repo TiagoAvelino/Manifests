@@ -10,7 +10,7 @@ metadata:
     tekton.dev/tags: github
     tekton.dev/displayName: "open github pull request"
     tekton.dev/platforms: "linux/amd64,linux/s390x,linux/ppc64le"
-  namespace: openshift-pipelines
+  namespace: prodepa-pipelines
 spec:
   description: >-
     This task will open a PR on Github based on several parameters.

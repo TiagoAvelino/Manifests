@@ -30,7 +30,7 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: pipeline
-    namespace: openshift-pipelines
+    namespace: prodepa-pipelines
 roleRef:
   kind: ClusterRole
   name: cluster-interceptors-role

@@ -1,0 +1,27 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: find-jar
+  namespace: prodepa-pipelines
+spec:
+  workspaces:
+    - name: source
+      description: "Your checked-out git repo"
+  results:
+    - name: jarPath
+      description: "Absolute path to the first .jar found under target/"
+  steps:
+    - name: find-jar
+      image: alpine:latest
+      script: |
+        #!/bin/sh
+        set -e
+        echo "🔍 Searching for .jar under $(workspaces.source.path)/target..."
+        JAR=$(find "$(workspaces.source.path)/target" -type f -name "*.jar" | head -n1)
+        if [ -z "$JAR" ]; then
+          echo "❌ No JAR found!"
+          exit 1
+        fi
+        echo "✅ Found JAR at: $JAR"
+        # expose it as a TaskResult
+        echo -n "$JAR" > "$(results.jarPath.path)"

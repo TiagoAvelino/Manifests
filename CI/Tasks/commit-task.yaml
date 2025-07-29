@@ -4,7 +4,7 @@ metadata:
   name: update-kustomize-repo
   annotations:
     tekton.dev/displayName: "Update Kustomize Git Repository"
-  namespace: openshift-pipelines
+  namespace: cicd-pipelines
 spec:
   params:
     - name: gitRepositoryUrl
@@ -27,8 +27,6 @@ spec:
   steps:
     - name: git-checkout
       image: alpine/git:v2.45.1
-      securityContext:
-        runAsUser: 1001
       workingDir: /workspace/repository
       env:
         - name: HOME
@@ -67,8 +65,6 @@ spec:
         git pull origin "$(params.gitRepositoryRevision)"
     - name: update-yaml
       image: alpine/git:v2.45.1
-      securityContext:
-        runAsUser: 1001
       workingDir: /workspace/repository
       script: |
         #!/usr/bin/env sh
@@ -81,8 +77,6 @@ spec:
         cat $(params.gitPath)
     - name: commit-push-changes
       image: alpine/git:v2.45.1
-      securityContext:
-        runAsUser: 1001
       workingDir: /workspace/repository
       env:
         - name: HOME

@@ -158,3 +158,6 @@ oc apply -f CI/Pipeline/pipeline-run.yaml
 - [Tekton Pipelines Documentation](https://tekton.dev/docs/pipelines/)
 - [OpenShift Pipelines Documentation](https://docs.openshift.com/container-platform/latest/cicd/pipelines/understanding-openshift-pipelines.html)
 - [OpenShift GitOps Documentation](https://docs.openshift.com/container-platform/latest/cicd/gitops/understanding-openshift-gitops.html)
+
+       oc adm policy add-role-to-user system:image-builder -z pipeline
+       oc adm policy add-role-to-user system:image-puller -z pipeline

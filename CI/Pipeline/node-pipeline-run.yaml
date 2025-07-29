@@ -1,0 +1,29 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: node-pipeline-run
+  namespace: cicd-pipelines
+spec:
+  pipelineRef:
+    name: simple-node-app-pipeline
+  podTemplate:
+    securityContext:
+      runAsUser: 0
+  serviceAccountName: pipeline
+  params:
+    - name: GIT_REPO
+      value: "https://github.com/TiagoAvelino/Simple-node-application"
+    - name: GIT_REVISION
+      value: "main"
+    - name: IMAGE_URL
+      value: "image-registry.openshift-image-registry.svc.cluster.local:5000/cicd-pipelines/simple-node-app:latest"
+    - name: MANIFESTS_REPO
+      value: "https://github.com/TiagoAvelino/node-manifests.git"
+    - name: MANIFESTS_REVISION
+      value: "main"
+  workspaces:
+    - name: app-source
+      persistentVolumeClaim:
+        claimName: workspace-pvc
+    - name: manifests-source
+      emptyDir: {}

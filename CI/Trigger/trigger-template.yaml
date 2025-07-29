@@ -17,7 +17,7 @@ spec:
     kind: PipelineRun
     metadata:
       generateName: java-pipeline-run-
-      namespace: openshift-pipelines
+      namespace: prodepa-pipelines
     spec:
       pipelineRef:
         name: java-pipeline

@@ -4,8 +4,7 @@ metadata:
   name: pipeline
   namespace: prodepa-pipelines
 secrets:
-  - name: git-credentials
-  - name: pipeline-dockercfg-l556s
   - name: my-quay-secret
+  - name: git-credentials
 imagePullSecrets:
-  - name: pipeline-dockercfg-l556s
+  - name: my-quay-secret

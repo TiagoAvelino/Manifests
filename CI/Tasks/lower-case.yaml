@@ -2,7 +2,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: lowercase-app-name
-  namespace: openshift-pipelines
+  namespace: prodepa-pipelines
 spec:
   params:
     - name: APP_NAME

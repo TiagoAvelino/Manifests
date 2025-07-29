@@ -2,7 +2,7 @@ apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
   name: java-pipeline
-  namespace: openshift-pipelines
+  namespace: prodepa-pipelines
 spec:
   params:
     - description: Nome da aplicação
@@ -70,7 +70,7 @@ spec:
             - clean
             - package
         - name: MAVEN-MIRROR-URL
-          value: my-url-nexus
+          value: http://nexus-nexus.apps.tiago.tiago.to/repository/maven-releases/
       workspaces:
         - name: source
           workspace: workspace
@@ -93,7 +93,7 @@ spec:
           - name: kind
             value: task
           - name: name
-            value: buildah-1-18-0
+            value: buildah
           - name: namespace
             value: openshift-pipelines
       params:
@@ -106,8 +106,8 @@ spec:
       workspaces:
         - name: source
           workspace: workspace
-        - name: dockerconfig
-          workspace: dockerconfig
+        # - name: dockerconfig
+        #   workspace: dockerconfig
     - name: update-kustomize
       runAfter:
         - buildah
@@ -119,7 +119,7 @@ spec:
           - name: name
             value: update-kustomize-repo
           - name: namespace
-            value: openshift-pipelines
+            value: prodepa-pipelines
       params:
         - name: gitRepositoryUrl
           value: $(params.GIT_REPO_PLATAFORM)
@@ -145,7 +145,7 @@ spec:
           - name: name
             value: github-open-pr
           - name: namespace
-            value: openshift-pipelines
+            value: prodepa-pipelines
       params:
         - name: REPO_FULL_NAME
           value: $(params.REPO_FULL_NAME)
@@ -164,9 +164,8 @@ spec:
   workspaces:
     - description: Workspace para persistir dados entre as tarefas
       name: workspace
-    - description: Workspace contendo o config.json para autenticação no Quay.io
-      name: dockerconfig
     - description: Workspace para configurações Maven, pode estar vazio
       name: maven_settings
     - description: Workspace para git merge pode estar vazio
       name: empty
+

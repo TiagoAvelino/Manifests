@@ -1,2 +1,0 @@
-      image: 'registry.redhat.io/ubi9/openjdk-17@sha256:cdbd64ba1b7826d09bc180fa19aa6fbc09ddb5bff5e02b7e1351353bbabebb78'
-      value: "registry.access.redhat.com/ubi8/openjdk-21:1.20"
