@@ -29,4 +29,3 @@ spec:
       targetPort: 8443
   selector:
     app: quarkus-example
-    deployment: quarkus-example

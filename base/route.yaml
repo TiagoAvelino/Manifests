@@ -17,7 +17,7 @@ metadata:
     openshift.io/host.generated: 'true'
     argocd.argoproj.io/sync-wave: "30"
 spec:
-  host: quarkus-example-quarkus-app.apps.tiago-cluster.sandbox3277.opentlc.com
+  host: quarkus-example-simple-node.apps.tiago-cluster.sandbox2099.opentlc.com
   to:
     kind: Service
     name: quarkus-example
