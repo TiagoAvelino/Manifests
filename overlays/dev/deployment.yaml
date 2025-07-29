@@ -15,4 +15,4 @@ spec:
     spec:
       containers:
       - name: quarkus-example
-        image: quay.io/rh_ee_tavelino/ci-quarkus
+        image: image-registry.openshift-image-registry.svc.cluster.local:5000/cicd-pipelines/springapp:latest@sha256:afaf181c08c8fe8df23c9f7b965857c1fbd770ad8ed8ad44b3588740a924344d
