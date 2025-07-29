@@ -24,5 +24,5 @@ spec:
               protocol: TCP
             - containerPort: 8443
               protocol: TCP
-      imagePullSecrets:
-        - name: my-quay-secret
+      # imagePullSecrets:
+      #   - name: my-quay-secret
